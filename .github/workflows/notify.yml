@@ -2,7 +2,7 @@ name: Karuta Timer Notify 🌸
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/30 * * * *" # toutes les 30 minutes
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Vérifie le timer
+      - name: Vérifie si le timer est actif
         id: check
         run: |
           if [ ! -f timer_state.json ]; then
