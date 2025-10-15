@@ -30,17 +30,15 @@ jobs:
           REPO_URL="https://github.com/${{ github.repository }}"
           TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
 
-          DESCRIPTION="Il est temps de farmer tes cartes, Senpai ! ✨
-
-Clique sur le bouton ci-dessous pour relancer le timer. 💕"
+          DESCRIPTION="Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕"
 
           curl -H "Content-Type: application/json" \
                -d "$(jq -n \
-               --arg title "🌸 Karuta Timer" \
+               --arg title '🌸 Karuta Timer' \
                --arg desc "$DESCRIPTION" \
                --arg url "$TRIGGER_URL" \
-               --arg image "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif" \
-               --arg footer "Powered by GitHub Actions • Made with 💖 by Spincka" \
+               --arg image 'https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif' \
+               --arg footer 'Powered by GitHub Actions • Made with 💖 by Spincka' \
                '{
                  "embeds": [
                    {
