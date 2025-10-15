@@ -2,7 +2,7 @@ name: Karuta Timer Notify 🌸
 
 on:
   schedule:
-    - cron: "*/30 * * * *" # toutes les 30 minutes
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Vérifie si le timer est actif
+      - name: Vérifie le timer
         id: check
         run: |
           if [ ! -f timer_state.json ]; then
@@ -26,28 +26,25 @@ jobs:
         if: steps.check.outputs.active == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           REPO_URL="https://github.com/${{ github.repository }}"
-          TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
-
-          DESCRIPTION="Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕"
+          WORKFLOW_URL="$REPO_URL/actions/workflows/restart.yml"
 
           curl -H "Content-Type: application/json" \
-               -d "$(jq -n \
-               --arg title '🌸 Karuta Timer' \
-               --arg desc "$DESCRIPTION" \
-               --arg url "$TRIGGER_URL" \
-               --arg image 'https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif' \
-               --arg footer 'Powered by GitHub Actions • Made with 💖 by Spincka' \
-               '{
+               -d '{
+                 "content": "⏰ Il est temps de farmer tes cartes, Senpai ! ✨",
                  "embeds": [
                    {
-                     "title": $title,
-                     "description": $desc,
+                     "title": "🌸 Karuta Timer",
+                     "description": "Clique sur le bouton ci-dessous pour relancer le timer. 💕",
                      "color": 15548997,
-                     "url": $url,
-                     "image": {"url": $image},
-                     "footer": {"text": $footer}
+                     "image": {
+                       "url": "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif"
+                     },
+                     "footer": {
+                       "text": "Powered by GitHub Actions • Made with 💖 by Spincka"
+                     }
                    }
                  ],
                  "components": [
@@ -58,15 +55,14 @@ jobs:
                          "type": 2,
                          "style": 5,
                          "label": "💫 Relancer le timer",
-                         "url": $url
+                         "url": "'"$WORKFLOW_URL"'"
                        }
                      ]
                    }
                  ]
-               }')" \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+               }' $DISCORD_WEBHOOK_URL
 
-          # Mets le timer sur pause
+          # Pause du timer
           jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
 
           git config user.name "github-actions"
