@@ -24,6 +24,7 @@ jobs:
           fi
           echo "Heure locale actuelle (UTC+2): $HOUR:$MIN"
 
+          # Pause entre 00h00 et 09h00 UTC+2
           if [ $HOUR -ge 0 ] && [ $HOUR -lt 9 ]; then
             echo "sleep=true" >> $GITHUB_OUTPUT
           else
