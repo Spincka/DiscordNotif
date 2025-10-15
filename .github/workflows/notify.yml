@@ -3,7 +3,7 @@ name: Karuta Timer Notify 🌸
 on:
   schedule:
     - cron: "*/35 * * * *"  # toutes les 35 minutes
-  workflow_dispatch:         # permet aussi de lancer manuellement
+  #workflow_dispatch:         # permet aussi de lancer manuellement
 
 jobs:
   notify:
