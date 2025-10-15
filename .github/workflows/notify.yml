@@ -28,14 +28,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO_URL="https://github.com/${{ github.repository }}"
-          TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml/dispatches"
+          # Lien vers la page du workflow (cliquable dans Discord)
+          TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
 
           curl -H "Content-Type: application/json" \
                -d "$(jq -n \
                --arg title "🌸 Karuta Timer" \
-               --arg desc "Il est temps de farmer tes cartes, Senpai ! ✨ \nClique sur le bouton ci-dessous pour relancer le timer. 💕" \
+               --arg desc "Il est temps de farmer tes cartes, Senpai ! ✨\n\nClique sur le bouton ci-dessous pour relancer le timer. 💕" \
                --arg url "$TRIGGER_URL" \
-               --arg image "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif" \
+               --arg image "https://raw.githubusercontent.com/${{ github.repository }}/main/assets/mwa.gif" \
                --arg footer "Powered by GitHub Actions • Made with 💖 by Spincka" \
                '{
                  "embeds": [
@@ -63,7 +64,7 @@ jobs:
                  ]
                }')" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
-          
+
           # Mets le timer sur pause pour éviter les notifs en boucle
           jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
           
