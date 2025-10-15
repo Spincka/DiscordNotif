@@ -1,0 +1,23 @@
+name: Discord Listener
+
+on:
+  repository_dispatch:
+    types: [karuta_restart]
+
+jobs:
+  restart_timer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Relancer le timer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          jq '.active = true' timer_state.json > tmp && mv tmp timer_state.json
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add timer_state.json
+          git commit -m "Restart timer via Discord webhook"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
