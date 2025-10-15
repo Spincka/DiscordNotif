@@ -28,8 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          REPO_URL="https://github.com/${{ github.repository }}"
-          WORKFLOW_URL="$REPO_URL/actions/workflows/restart.yml"
+          WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/workflows/restart.yml"
 
           curl -H "Content-Type: application/json" \
                -d '{
