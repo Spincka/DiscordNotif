@@ -1,25 +1,22 @@
-name: Restart Timer
+name: Relance le Karuta Timer 💫
 
 on:
-  workflow_dispatch:   # déclenché manuellement par clic ou API
+  workflow_dispatch:
 
 jobs:
   restart:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Réactive le timer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           jq '.active = true' timer_state.json > tmp && mv tmp timer_state.json
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add timer_state.json
           git commit -m "Relance du timer"
-          git push
-          
-      - name: Envoie confirmation sur Discord
-        run: |
-          curl -H "Content-Type: application/json" \
-               -d "{\"content\": \"✅ Timer relancé pour 30 minutes !\"}" \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
