@@ -1,0 +1,12 @@
+stages:
+  - notify
+
+variables:
+  GIT_STRATEGY: fetch
+
+notify:
+  stage: notify
+  script:
+    - bash send_discord_notification.sh
+  only:
+    - schedules
