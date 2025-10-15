@@ -38,7 +38,7 @@ jobs:
                  "embeds": [
                    {
                      "title": "🌸 Karuta Timer",
-                     "description": "⏰ Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕",
+                     "description": "⏰ Il est temps de farmer Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕",
                      "color": 15548997,
                      "image": {
                        "url": "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif"
