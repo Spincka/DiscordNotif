@@ -26,7 +26,6 @@ jobs:
         if: steps.check.outputs.active == 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/main/assets/mwa.gif"
           FOOTER="Powered by GitHub Actions • Made with 💖 by Spincka"
@@ -36,7 +35,7 @@ jobs:
                -d "$(jq -n \
                --arg title "🌸 Karuta Timer" \
                --arg desc "$DESC" \
-               --arg url "https://api.github.com/repos/${{ github.repository }}/dispatches" \
+               --arg url "https://discord.com/api/webhooks/YOUR_BOT_ENDPOINT" \
                --arg image "$IMAGE_URL" \
                --arg footer "$FOOTER" \
                '{
@@ -66,10 +65,9 @@ jobs:
                }')" \
                $DISCORD_WEBHOOK_URL
 
-          # Mets le timer sur pause pour éviter les notifs en boucle
           jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add timer_state.json
           git commit -m "Pause timer après notif"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
