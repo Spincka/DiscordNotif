@@ -7,11 +7,12 @@ on:
 jobs:
   restart_timer:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Relancer le timer
+      - name: Relancer le timer automatiquement
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
