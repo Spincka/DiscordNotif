@@ -29,6 +29,7 @@ jobs:
             echo "sleep=true" >> $GITHUB_OUTPUT
           else
             echo "sleep=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Envoie notif Discord
         if: steps.check_time.outputs.sleep == 'false'
