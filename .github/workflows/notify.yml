@@ -3,30 +3,31 @@ name: Karuta Timer Notify 🌸
 on:
   schedule:
     - cron: "*/35 * * * *"  # toutes les 35 minutes
-  #workflow_dispatch:         # permet aussi de lancer manuellement
 
 jobs:
   notify:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Vérifier l'heure locale
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Vérifie l'heure et la pause
         id: check_time
         run: |
-          # UTC +2 pour Paris
+          # Heure locale UTC+2
           HOUR=$(date -u +%H)
+          MIN=$(date -u +%M)
           HOUR=$((HOUR + 2))
           if [ $HOUR -ge 24 ]; then
             HOUR=$((HOUR - 24))
           fi
-
-          echo "Current hour (UTC+2): $HOUR"
+          echo "Heure locale actuelle (UTC+2): $HOUR:$MIN"
 
           if [ $HOUR -ge 0 ] && [ $HOUR -lt 9 ]; then
             echo "sleep=true" >> $GITHUB_OUTPUT
           else
             echo "sleep=false" >> $GITHUB_OUTPUT
-          fi
 
       - name: Envoie notif Discord
         if: steps.check_time.outputs.sleep == 'false'
