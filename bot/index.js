@@ -1,12 +1,13 @@
-const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const fetch = require('node-fetch');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.MessageReactionAdd] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 // === VARIABLES D'ENVIRONNEMENT ===
-const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN; // Ton token bot Discord
-const GITHUB_REPO = process.env.GITHUB_REPO;             // Exemple : Spincka/DiscordNotif
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;           // Ton Personal Access Token GitHub
+// Ces variables doivent être ajoutées dans GitHub Secrets ou localement
+const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN; // Token du bot Discord
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;           // Personal Access Token GitHub
+const GITHUB_REPO = 'Spincka/DiscordNotif';              // Repo exact
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -19,7 +20,6 @@ client.on('interactionCreate', async interaction => {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      // POST vers GitHub API pour déclencher listener.yml
       const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/dispatches`, {
         method: 'POST',
         headers: {
