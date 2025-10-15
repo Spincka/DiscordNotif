@@ -35,7 +35,7 @@ jobs:
                --arg title "🌸 Karuta Timer" \
                --arg desc "Il est temps de farmer tes cartes, Senpai ! ✨ \nClique sur le bouton ci-dessous pour relancer le timer. 💕" \
                --arg url "$TRIGGER_URL" \
-               --arg image "https://i.imgur.com/mz6YBcf.gif" \
+               --arg image "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif" \
                --arg footer "Powered by GitHub Actions • Made with 💖 by Spincka" \
                '{
                  "embeds": [
