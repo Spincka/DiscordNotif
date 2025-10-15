@@ -17,7 +17,7 @@ jobs:
           HOUR=$(date -u +%H)
           HOUR=$((HOUR + 2))
           if [ $HOUR -ge 24 ]; then
-            HOUR=$((HOUR-24))
+            HOUR=$((HOUR - 24))
           fi
 
           echo "Current hour (UTC+2): $HOUR"
@@ -43,9 +43,15 @@ jobs:
                --arg desc "$DESC" \
                --arg image "$IMAGE_URL" \
                --arg footer "$FOOTER" \
+               --arg author_name "🌸 KarutaNotifier" \
+               --arg author_icon "$IMAGE_URL" \
                '{
                  "embeds": [
                    {
+                     "author": {
+                       "name": $author_name,
+                       "icon_url": $author_icon
+                     },
                      "title": $title,
                      "description": $desc,
                      "color": 15548997,
