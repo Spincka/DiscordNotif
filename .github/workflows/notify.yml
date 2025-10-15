@@ -33,7 +33,8 @@ jobs:
           curl -H "Content-Type: application/json" \
                -d "$(jq -n \
                --arg title "🌸 Karuta Timer" \
-               --arg desc "Il est temps de farmer tes cartes, Senpai ! ✨\n\nClique sur le bouton ci-dessous pour relancer le timer. 💕" \
+               --arg desc "Il est temps de farmer tes cartes, Senpai !" \
+               --arg desc "✨Clique sur le bouton ci-dessous pour relancer le timer. 💕" \
                --arg url "$TRIGGER_URL" \
                --arg image "https://i.imgur.com/mz6YBcf.gif" \
                --arg footer "Powered by GitHub Actions • Made with 💖 by Spincka" \
