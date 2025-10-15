@@ -28,16 +28,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO_URL="https://github.com/${{ github.repository }}"
-          # Lien vers la page du workflow (cliquable dans Discord)
           TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
+          IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/main/assets/mwa.gif"
+          FOOTER="Powered by GitHub Actions • Made with 💖 by Spincka"
+          DESC=$'Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕'
 
           curl -H "Content-Type: application/json" \
                -d "$(jq -n \
                --arg title "🌸 Karuta Timer" \
-               --arg desc "Il est temps de farmer tes cartes, Senpai ! ✨\n\nClique sur le bouton ci-dessous pour relancer le timer. 💕" \
+               --arg desc "$DESC" \
                --arg url "$TRIGGER_URL" \
-               --arg image "https://raw.githubusercontent.com/${{ github.repository }}/main/assets/mwa.gif" \
-               --arg footer "Powered by GitHub Actions • Made with 💖 by Spincka" \
+               --arg image "$IMAGE_URL" \
+               --arg footer "$FOOTER" \
                '{
                  "embeds": [
                    {
