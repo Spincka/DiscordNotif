@@ -4,10 +4,9 @@ const fetch = require('node-fetch');
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 // === VARIABLES D'ENVIRONNEMENT ===
-// Ces variables doivent être ajoutées dans GitHub Secrets ou localement
-const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN; // Token du bot Discord
+const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN; // Token bot Discord
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;           // Personal Access Token GitHub
-const GITHUB_REPO = 'Spincka/DiscordNotif';              // Repo exact
+const GITHUB_REPO = 'Spincka/DiscordNotif';              // Repo GitHub
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -20,6 +19,7 @@ client.on('interactionCreate', async interaction => {
     await interaction.deferReply({ ephemeral: true });
 
     try {
+      // POST vers GitHub pour déclencher le workflow notify.yml
       const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/dispatches`, {
         method: 'POST',
         headers: {
