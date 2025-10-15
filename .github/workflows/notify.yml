@@ -2,24 +2,40 @@ name: Karuta Timer Notify 🌸
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
-  workflow_dispatch:
+    - cron: "*/35 * * * *"  # toutes les 35 minutes
+  workflow_dispatch:         # permet aussi de lancer manuellement
 
 jobs:
   notify:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Vérifier l'heure locale
+        id: check_time
+        run: |
+          # UTC +2 pour Paris
+          HOUR=$(date -u +%H)
+          HOUR=$((HOUR + 2))
+          if [ $HOUR -ge 24 ]; then
+            HOUR=$((HOUR-24))
+          fi
+
+          echo "Current hour (UTC+2): $HOUR"
+
+          if [ $HOUR -ge 0 ] && [ $HOUR -lt 9 ]; then
+            echo "sleep=true" >> $GITHUB_OUTPUT
+          else
+            echo "sleep=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Envoie notif Discord
+        if: steps.check_time.outputs.sleep == 'false'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/main/assets/mwa.gif"
           FOOTER="Powered by GitHub Actions • Made with 💖 by Spincka"
-          DESC=$'Il est temps de farmer tes cartes, Senpai ! ✨\n\nClique sur le bouton ci-dessous pour relancer le timer. 💕'
+          DESC=$'Il est temps de farmer tes cartes, Senpai ! ✨\n\nN’oublie pas de taper ta commande Karuta pour récupérer ta carte ! 💕'
 
           curl -H "Content-Type: application/json" \
                -d "$(jq -n \
@@ -35,19 +51,6 @@ jobs:
                      "color": 15548997,
                      "image": {"url": $image},
                      "footer": {"text": $footer}
-                   }
-                 ],
-                 "components": [
-                   {
-                     "type": 1,
-                     "components": [
-                       {
-                         "type": 2,
-                         "style": 2,
-                         "label": "💫 Relancer le timer",
-                         "custom_id": "restart_timer"
-                       }
-                     ]
                    }
                  ]
                }')" \
