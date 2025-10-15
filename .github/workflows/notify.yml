@@ -13,17 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Vérifie si le timer est actif
-        id: check
-        run: |
-          if [ ! -f timer_state.json ]; then
-            echo '{"active": true}' > timer_state.json
-          fi
-          ACTIVE=$(jq -r '.active' timer_state.json)
-          echo "active=$ACTIVE" >> $GITHUB_OUTPUT
-
       - name: Envoie notif Discord
-        if: steps.check.outputs.active == 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -35,7 +25,6 @@ jobs:
                -d "$(jq -n \
                --arg title "🌸 Karuta Timer" \
                --arg desc "$DESC" \
-               --arg url "https://discord.com/api/webhooks/YOUR_BOT_ENDPOINT" \
                --arg image "$IMAGE_URL" \
                --arg footer "$FOOTER" \
                '{
@@ -44,7 +33,6 @@ jobs:
                      "title": $title,
                      "description": $desc,
                      "color": 15548997,
-                     "url": $url,
                      "image": {"url": $image},
                      "footer": {"text": $footer}
                    }
@@ -55,19 +43,12 @@ jobs:
                      "components": [
                        {
                          "type": 2,
-                         "style": 5,
+                         "style": 2,
                          "label": "💫 Relancer le timer",
-                         "url": $url
+                         "custom_id": "restart_timer"
                        }
                      ]
                    }
                  ]
                }')" \
                $DISCORD_WEBHOOK_URL
-
-          jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add timer_state.json
-          git commit -m "Pause timer après notif"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
