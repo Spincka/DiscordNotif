@@ -37,7 +37,7 @@ jobs:
                  "embeds": [
                    {
                      "title": "🌸 Karuta Timer",
-                     "description": "⏰ Il est temps de farmer Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕",
+                     "description": "⏰ Il est temps de farmer Senpai ! ✨ Cliquez sur le bouton ci-dessous pour relancer le timer. 💕",
                      "color": 15548997,
                      "image": {
                        "url": "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif"
@@ -62,7 +62,6 @@ jobs:
                  ]
                }' $DISCORD_WEBHOOK_URL
 
-          # Pause du timer
           jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
 
           git config user.name "github-actions"
