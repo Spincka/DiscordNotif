@@ -1,0 +1,38 @@
+name: Notify Timer
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"  # toutes les 30 min
+  workflow_dispatch:        # permet de lancer manuellement aussi
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifie le timer
+        id: check
+        run: |
+          ACTIVE=$(jq -r '.active' timer_state.json)
+          echo "active=$ACTIVE" >> $GITHUB_OUTPUT
+
+      - name: Envoie notif Discord
+        if: steps.check.outputs.active == 'true'
+        run: |
+          REPO_URL="https://github.com/${{ github.repository }}"
+          TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml/dispatches"
+          MESSAGE="⏰ 30 minutes écoulées ! [Clique ici pour relancer le timer]($TRIGGER_URL)"
+          
+          curl -H "Content-Type: application/json" \
+               -d "{\"content\": \"$MESSAGE\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+          
+          # Mets le timer sur false
+          jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
+          
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add timer_state.json
+          git commit -m "Pause timer après notif"
+          git push
