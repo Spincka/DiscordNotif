@@ -2,7 +2,7 @@ name: Karuta Timer Notify 🌸
 
 on:
   schedule:
-    - cron: "*/30 * * * *" # toutes les 30 minutes
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -33,11 +33,12 @@ jobs:
 
           curl -H "Content-Type: application/json" \
                -d '{
-                 "content": "⏰ Il est temps de farmer tes cartes, Senpai ! ✨",
+                 "username": "Karuta Timer 🌸",
+                 "avatar_url": "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif",
                  "embeds": [
                    {
                      "title": "🌸 Karuta Timer",
-                     "description": "Clique sur le bouton ci-dessous pour relancer le timer. 💕",
+                     "description": "⏰ Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕",
                      "color": 15548997,
                      "image": {
                        "url": "https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif"
