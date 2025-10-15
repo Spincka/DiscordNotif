@@ -1,43 +1,76 @@
-- name: Envoie notif Discord
-  if: steps.check.outputs.active == 'true'
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  run: |
-    REPO_URL="https://github.com/${{ github.repository }}"
-    TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
-    
-    DESCRIPTION="Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕"
-    
-    curl -H "Content-Type: application/json" \
-         -d "$(jq -n \
-         --arg title '🌸 Karuta Timer' \
-         --arg desc "$DESCRIPTION" \
-         --arg url "$TRIGGER_URL" \
-         --arg image 'https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif' \
-         --arg footer 'Powered by GitHub Actions • Made with 💖 by Spincka' \
-         '{
-           "embeds": [
-             {
-               "title": $title,
-               "description": $desc,
-               "color": 15548997,
-               "url": $url,
-               "image": {"url": $image},
-               "footer": {"text": $footer}
-             }
-           ],
-           "components": [
-             {
-               "type": 1,
-               "components": [
-                 {
-                   "type": 2,
-                   "style": 5,
-                   "label": "💫 Relancer le timer",
-                   "url": $url
-                 }
-               ]
-             }
-           ]
-         }')" \
-         ${{ secrets.DISCORD_WEBHOOK_URL }}
+name: Karuta Timer Notify 🌸
+
+on:
+  schedule:
+    - cron: "*/30 * * * *" # toutes les 30 minutes
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Vérifie si le timer est actif
+        id: check
+        run: |
+          if [ ! -f timer_state.json ]; then
+            echo '{"active": true}' > timer_state.json
+          fi
+          ACTIVE=$(jq -r '.active' timer_state.json)
+          echo "active=$ACTIVE" >> $GITHUB_OUTPUT
+
+      - name: Envoie notif Discord
+        if: steps.check.outputs.active == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO_URL="https://github.com/${{ github.repository }}"
+          TRIGGER_URL="$REPO_URL/actions/workflows/restart.yml"
+
+          DESCRIPTION="Il est temps de farmer tes cartes, Senpai ! ✨\nClique sur le bouton ci-dessous pour relancer le timer. 💕"
+
+          curl -H "Content-Type: application/json" \
+               -d "$(jq -n \
+               --arg title '🌸 Karuta Timer' \
+               --arg desc "$DESCRIPTION" \
+               --arg url "$TRIGGER_URL" \
+               --arg image 'https://media.tenor.com/kC3K9nbhF8IAAAAi/anime-girl.gif' \
+               --arg footer 'Powered by GitHub Actions • Made with 💖 by Spincka' \
+               '{
+                 "embeds": [
+                   {
+                     "title": $title,
+                     "description": $desc,
+                     "color": 15548997,
+                     "url": $url,
+                     "image": {"url": $image},
+                     "footer": {"text": $footer}
+                   }
+                 ],
+                 "components": [
+                   {
+                     "type": 1,
+                     "components": [
+                       {
+                         "type": 2,
+                         "style": 5,
+                         "label": "💫 Relancer le timer",
+                         "url": $url
+                       }
+                     ]
+                   }
+                 ]
+               }')" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+          # Mets le timer sur pause
+          jq '.active = false' timer_state.json > tmp && mv tmp timer_state.json
+
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add timer_state.json
+          git commit -m "Pause timer après notif"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
